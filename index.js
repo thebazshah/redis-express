@@ -47,7 +47,7 @@ app.get('/oracles', function (req, res, next) {
 app.post("/oracles", function(req, res, next) {
   const oracles = req.body
   console.log(oracles)
-  if (oracles !== null || Array.isArray(oracles)) {
+  if (oracles !== null && oracles !== undefined && Array.isArray(oracles)) {
     redis.set("oracles", JSON.stringify(oracles)).then(result => {
       console.log("Save oracle result: ", result);
       if (result === "OK") {
@@ -57,7 +57,7 @@ app.post("/oracles", function(req, res, next) {
       }
     });
   } else {
-    return false;
+    return undefined;
   }
 })
 
