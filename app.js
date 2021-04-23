@@ -18,7 +18,8 @@ app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-const host = "redis-oracle-001.2synia.0001.use2.cache.amazonaws.com"
+// const host = "redis-oracle-001.2synia.0001.use2.cache.amazonaws.com"
+const host = "redis-oracle-ro.2synia.ng.0001.use2.cache.amazonaws.com"
 const port = "6379"
 
 app.get('/', (req, res) => {
