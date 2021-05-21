@@ -18,16 +18,16 @@ const host = "redis-oracle-ro.2synia.ng.0001.use2.cache.amazonaws.com"
 const port = "6379"
 
 app.all("/oracles", (req, res, next) => {
-  const orig = req.get('origin');
+  const orig = req.get('origin')
   if (origins.indexOf(orig) >= 0) {
-    res.set("Access-Control-Allow-Origin", orig);
+    res.set("Access-Control-Allow-Origin", orig)
   } else {
-    res.set("Access-Control-Allow-Origin", "https://zap.org");
+    res.set("Access-Control-Allow-Origin", "https://zap.org")
   }
-  res.set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  res.set("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-  res.set("Access-Control-Allow-Credentials", true);
-  res.set("Access-Control-Allow-Headers", "Authorization");
+  res.set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+  res.set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+  res.set("Access-Control-Allow-Credentials", true)
+  res.set("Access-Control-Allow-Headers", "Authorization")
   next()
 })
 
@@ -36,9 +36,12 @@ app.get('/', (req, res) => {
 })
 
 app.get('/oracles', async (req, res, next) => {
+  const db = parseInt(req.query.db)
+  const redisOptions = { db: typeof(db) === "number" && db > 0 && db < 16 ? db : 0 }
+  console.log("redisOptions", redisOptions)
   const oracles = []
-  const redis = new Redis(port, host);
-  const oraclesExist = await redis.exists("oracles");
+  const redis = new Redis(port, host, redisOptions)
+  const oraclesExist = await redis.exists("oracles")
   if (oraclesExist && typeof (oraclesExist) === "number" && oraclesExist === 1) {
     // list of oracle exists
     redis.lrange("oracles", 0, 1999).then(oras => {
@@ -46,7 +49,7 @@ app.get('/oracles', async (req, res, next) => {
       if (oras && Array.isArray(oras)) {
         for (const ora of oras) {
           try {
-            const oraJson = JSON.parse(JSON.stringify(ora));
+            const oraJson = JSON.parse(JSON.stringify(ora))
             oracles.push(oraJson)
           } catch (e) {
             console.log("Oracle object is not JSON parseable", e)
